@@ -1,0 +1,27 @@
+{
+  "name": "workqueue",
+  "version": "1.0.0",
+  "description": "This library puts your tasks into a queue, and limits concurrent task's number.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zenboss/workqueue.git"
+  },
+  "keywords": [
+    "workqueue",
+    "queue",
+    "EMFILE"
+  ],
+  "author": "zenboss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zenboss/workqueue/issues"
+  },
+  "homepage": "https://github.com/zenboss/workqueue"
+}
