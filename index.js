@@ -9,45 +9,41 @@
 
 var _innerNextTick = setImmediate;
 
-var _parseInt = function(){
-	return parseInt.apply(this,arguments)||0;
-}
-
-
 var workqueue = function(opt){
 	var self = this;
 	opt = opt||{};
-	if(!!opt.workMax)self.setQueueMax(opt.workMax);
+	if(!!opt.workMax)self.setWorkMax(opt.workMax);
 	self._queueArray = [];
-	self._workMax = _parseInt(self._workMax)||1000;
 	self._queueNowRun = 0;
 
-}
+};
 workqueue.create = function(opt){
 	return new workqueue(opt);
-}
-workqueue.prototype.setQueueMax = function(maxnum){
-	this._workMax = _parseInt(maxnum);
-}
+};
+workqueue.prototype.setQueueMax = workqueue.prototype.setWorkMax = function(maxnum){
+	this._workMax = parseInt(maxnum)||1000;
+};
 
-workqueue.prototype.queue = function(doFn){
+workqueue.prototype.queue = function(workFn){
 	var self = this;
+	if('function' == typeof workFn){
+		self._queueArray.push(workFn);//将函数放入全局队列
+		self._doQueue();
+	}
 
-	self._queueArray.push(doFn);//将函数放入全局队列
-	self._doQueue();
 };
 workqueue.prototype._doQueue = function(){
 	var self = this;
 	_innerNextTick(function(){
 		if(self._queueNowRun<self._workMax){
 			self._queueNowRun++;
-			var fn = self._queueArray.pop();
+			var workFn = self._queueArray.pop();
 
-			if(!!fn){
-				fn(function(){
+			if(!!workFn){
+				workFn(function(){
 					self._queueNowRun--;
 					self._doQueue();
-				})
+				});
 			}else{
 				self._queueNowRun--;
 			}
