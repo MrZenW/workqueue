@@ -1,56 +1,59 @@
-/**
- * User: 	zenboss
- * GitHub:  zenboss
- * Date:    2015-07-03
- * Time:    15:58
- * Email:   zenyes@gmail.com
- */
-"use strict";
+;
+'use strict';
+(function WorkQueueModuleSpace() {
+  var _innerNextTick;
+  if ('function' === typeof setImmediate) {
+    _innerNextTick = setImmediate;
+  } else {
+    _innerNextTick = function (cb) {
+      setTimtoue(cb, 0);
+    }
+  }
 
-var _innerNextTick = setImmediate;
-
-var workqueue = function(opt){
+  function WorkQueue (opt) {
     var self = this;
-    opt = opt||{};
-    if(!!opt.workMax)self.setWorkMax(opt.workMax);
+    opt = opt || {};
+    if (!!opt.workMax) self.setWorkMax(opt.workMax);
     self._queueArray = [];
     self._queueNowRun = 0;
 
-};
-workqueue.create = function(opt){
-    return new workqueue(opt);
-};
-workqueue.prototype.setQueueMax = workqueue.prototype.setWorkMax = function(maxnum){
-    this._workMax = parseInt(maxnum)||1000;
-};
+  };
+  WorkQueue.create = function (opt) {
+    return new WorkQueue(opt);
+  };
+  WorkQueue.prototype.setQueueMax = WorkQueue.prototype.setWorkMax = function (maxnum) {
+    this._workMax = parseInt(maxnum) || 1000;
+  };
 
-workqueue.prototype.queue = function(workFn){
+  WorkQueue.prototype.queue = function (workFn) {
     var self = this;
-    if('function' == typeof workFn){
-        self._queueArray.push(workFn);//将函数放入全局队列
-        self._doQueue();
+    if ('function' == typeof workFn) {
+      self._queueArray.push(workFn);
+      self._doQueue();
     }
 
-};
-workqueue.prototype._doQueue = function(){
+  };
+  WorkQueue.prototype._doQueue = function () {
     var self = this;
-    _innerNextTick(function(){
-        if(self._queueNowRun<self._workMax){
-            self._queueNowRun++;
-            var workFn = self._queueArray.pop();
+    _innerNextTick(function () {
+      if (self._queueNowRun < self._workMax) {
+        self._queueNowRun++;
+        var workFn = self._queueArray.pop();
 
-            if(!!workFn){
-                workFn(function(){
-                    self._queueNowRun--;
-                    self._doQueue();
-                });
-            }else{
-                self._queueNowRun--;
-            }
-
+        if (!!workFn) {
+          workFn(function () {
+            self._queueNowRun--;
+            self._doQueue();
+          });
+        } else {
+          self._queueNowRun--;
         }
-    });
-    
-};
 
-module.exports = workqueue;
+      }
+    });
+  };
+
+  if ('object' === typeof module) module.exports = WorkQueue;
+  if ('object' === typeof window) window.Varbox = WorkQueue;
+  if ('object' === typeof self) self.Varbox = WorkQueue;
+})();
